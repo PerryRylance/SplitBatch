@@ -1,5 +1,33 @@
 {
+	"name": "perry-rylance/split-batch",
+	"version": "1.0.0",
+	"minimum-stability": "stable",
+	
+	"description": "This library provides a means to do large batch processing when unix cron jobs aren't necessarily available. This is useful when you need to process a large amount of data, or carry out a time consuming task, where cron isn't available, such as on low tiered shared hosting.",
+	
+	"type": "library",
+	"keywords": ["Cron", "Batch", "Split"],
+	"homepage": "https://perryrylance.com",
+	"license": "MIT",
+	
+	"authors": [
+		{
+			"name": "Perry Rylance",
+			"email": "contact@perryrylance.com",
+			"homepage": "https://perryrylance.com",
+			"role": "Developer"
+		}
+	],
+	
     "require": {
+		"php": ">=7.1",
         "doctrine/dbal": "^3.0"
-    }
+    },
+	
+	"autoload": {
+		"psr-4": {
+			"PerryRylance\\": ["includes"]
+		},
+		"classmap": ["includes"]
+	}
 }
