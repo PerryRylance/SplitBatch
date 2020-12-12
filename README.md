@@ -87,4 +87,21 @@ The daemon will initialise the database tables if necessary.
     - If a job with this handle already exists, the instance data will be loaded from the database, the class will be instantiated and you'll receive the existing job from the database. This isn't usually necessary, but is provided as a convenience. It's recommended that you implement all logic within your subclass itself rather than working on the object externally.
 
 ### Running the daemon
+
 5. Call `$daemon->run();` on the daemon you previously created. The daemon will run all applicable jobs, managing limiting iteration, timing and scheduling along the way.
+
+### Running the example
+
+If you would like to run the example included with this library, please have a valid WordPress installation set up with your web server serving it up.
+
+Extract or clone this repository into a subfolder one level below your web root, then visit `/SplitBatch/test.php` on your server.
+
+The test will read an input CSV which currently contains 50,000 rows. It will then start figuring out the n-th prime number for each row.
+
+The test script will reload itself every 1 second to trigger another iteration until the job has completed and all 50,000 primes have been found.
+
+At this point the result is written to `test-result.csv` and downloaded by the browser.
+
+Depending on the performance of the server this is run on, you'll probably see a high number of iterations (up to 10,000) at first, possibly completing before the self imposed 1,000ms default limit on execution time.
+
+As the job progresses, you'll likely see that the 1,000ms limit is being hit with below 10,000 iterations completing. Because of the nature of the algorithm used to find primes in this example, this will get progressively slower until the job completes.
