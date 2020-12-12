@@ -1,0 +1,6 @@
+parameters:
+    visibility_levels: [public, protected] # array
+    annotation_groups: [todo, deprecated] # array
+    title: "SplitBatch Documentation" # string
+    base_url: "https://perryrylance.com/SplitBatch" # string
+    overwrite: false # bool
