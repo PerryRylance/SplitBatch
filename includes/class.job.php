@@ -15,33 +15,44 @@ abstract class Job
 	
 	protected		$state;
 	
-	public static function create($class, string $handle)
+	public static function create($class, string $handle, array $options=null)
 	{
 		if(!is_subclass_of($class, '\PerryRylance\SplitBatch\Job'))
 			throw new \Exception("Argument must be a class name which extends Job");
 		
-		$record					= Job::getRecord($handle);
+		$existing				= Job::get($handle);
+		
+		if($existing)
+			return $existing;
 		
 		$instance				= new $class();
+		
 		$instance->class		= $class;
 		$instance->handle		= $handle;
+		$instance->created		= date(\DateTime::ISO8601);
+			
+		$instance->init($options);
+		$instance->save();
+		
+		return $instance;
+	}
+	
+	public static function get(string $handle)
+	{
+		$record					= Job::getRecord($handle);
 		
 		if(!$record)
+			return null;
+		
+		$class					= $record['class'];
+		$instance				= new $class();
+		
+		foreach($record as $key => $value)
 		{
-			$instance->created = date(\DateTime::ISO8601);
-			
-			$instance->init();
-			$instance->save();
-		}
-		else
-		{
-			foreach($record as $key => $value)
-			{
-				if($key == "state")				
-					$instance->{$key} = unserialize($value);
-				else
-					$instance->{$key} = $value;
-			}
+			if($key == "state")				
+				$instance->{$key} = unserialize($value);
+			else
+				$instance->{$key} = $value;
 		}
 		
 		return $instance;
@@ -80,7 +91,9 @@ abstract class Job
 			
 			$iterations++, $elapsed = Clock::milliseconds() - $start)
 		{
-			if($this->iterate() === false)
+			$result = $this->iterate();
+			
+			if($result === false)
 				return;	// NB: Signal to stop iterating
 		}
 		
@@ -94,7 +107,7 @@ abstract class Job
 		$this->complete();
 	}
 	
-	protected function abort()
+	public function abort()
 	{
 		$this->complete();
 	}
